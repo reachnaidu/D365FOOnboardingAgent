@@ -1,0 +1,79 @@
+Master Specification: Automated User Lifecycle Agent
+1. Executive Summary
+This agent orchestrates the lifecycle of users within Microsoft Entra ID and Dynamics 365 Finance & Operations (F&O). It uses a dual-track logic for Workflow A (Onboarding) and Workflow B (Offboarding) to ensure security and cost-optimization.
++1
+
+2. System Architecture
+
+Interaction Layer: Hosted in Microsoft Teams; handles natural language processing and user confirmation.
+
+
+Orchestration Layer (The Agent): Manages the logic for role mapping and license consolidation (Steps 5 & 8).
+
+
+Integration Layer (Power Automate): Acts as the exclusive gateway to the Microsoft Graph API for license assignments.
+
+
+Action Layer (Custom APIs): Directly interacts with D365 F&O for user profile and role creation.
+
+3. Workflow A: Intelligent Onboarding Logic
+Step 5: Role Determination
+
+Input: Natural language job duties.
+
+
+Logic: The agent parses duties into a structured array and attempts to map them to D365 RoleNames.
+
+
+Fallback: If no match is found, the agent queries a RAG-based Knowledge Base to suggest standard roles.
++1
+
+Step 8: License Consolidation (The Priority Rule)
+
+Optimization: The agent identifies required SKUs and applies a priority hierarchy (e.g., Finance = 90, SCM = 80).
++2
+
+
+Suppression: If a higher-priority license covers the duties of a lower-priority one, the lower one is discarded to save costs.
++2
+
+
+Formatting: Licenses are appended with - base or - attach suffixes.
++1
+
+Step 9: Technical Execution (Power Automate)
+Trigger: The agent calls the "Check and Assign License to user in M365" flow.
+
+Payload: The agent must send an email and a LicenseInput string.
+
+Mapping Table: The LicenseInput must exactly match the flow's internal keys:
+
+Finance / Finance - Attach
+
+Supply Chain Management / Supply Chain Management - Attach
+
+Commerce / Human Resources / Project Operations
+
+4. Workflow B: Rapid Offboarding
+
+Security: Requires manual confirmation before deactivation.
+
+
+Action: Calls a custom API to toggle the user status to "Disabled" in D365 F&O based on their email.
+
+5. Operational Validation (Step 10)
+Before closing a case, the agent validates the success criteria for each entity:
+
+
+Azure AD: Object ID must be active.
+
+
+D365 User: Must be successfully mapped to a Legal Entity.
+
+Licenses: SKU must be confirmed as assigned by the Power Automate response (islicenseassigned: true).
+
+6. Security & Compliance
+Least Privilege: The agent uses service principal authentication via Power Automate to access Microsoft Graph.
+
+
+Data Handling: No persistent storage of PII; the agent acts only as a real-time orchestrator.
