@@ -1,17 +1,42 @@
 
 Automated F&O User onboarding  Orchestrator
 
+---
 ## 1. Project Overview
 
-This repository contains the complete documentation, logic matrices, and technical specifications for an AI-driven **User Lifecycle Orchestrator**. The system automates the onboarding and offboarding of users in **Microsoft Entra ID** and **Dynamics 365 Finance & Operations (F&O)** using natural language processing and Power Automate.
+This repository contains the complete documentation, logic matrices, and technical specifications for an AI-driven **User Lifecycle Orchestrator**. The system automates the end-to-end onboarding and offboarding of users in **Microsoft Entra ID (Active Directory)** and **Dynamics 365 Finance & Operations (F&O)** using natural language processing and Power Automate.
 
-### Key Capabilities
+By bridging the gap between human HR requests and technical system requirements, the orchestrator ensures that new hires are productive from minute one with the correct identity, permissions, and licenses.
 
-* **Semantic Role Mapping:** Translates job duties into D365 RoleNames.
-* **License Optimization:** Automatically applies the "Base vs. Attach" priority rule to minimize M365 licensing costs.
-* **Automated Provisioning:** Communicates directly with Microsoft Graph API for real-time license assignment.
+### **Key Capabilities**
+
+* **End-to-End User Provisioning:**
+* **Microsoft Entra ID (AD):** Automatically creates the user account object, establishes the UPN, and configures critical identity metadata like `usageLocation`.
+* **Dynamics 365 F&O:** Simultaneously creates the user record within the ERP environment, ensuring the identity is synchronized across the enterprise stack.
+
+
+* **Semantic Role & Duty Mapping:**
+* Translates natural language job descriptions (e.g., *"Handles vendor payments and bank reconciliations"*) into technical **D365 Roles, Duties, and Privileges**.
+* Ensures that security permissions are granted based on the principle of least privilege while matching actual business functions.
+
+
+* **Automated Security Role Assignment:**
+* Directly pushes the identified security roles into the D365 user profile.
+* Dynamically manages membership in **Entra ID Security Groups**, ensuring that folder access and application permissions are aligned with the user’s ERP role.
+
+
+* **Intelligent License Optimization:**
+* Automatically applies the "Base vs. Attach" priority rule (e.g., prioritizing SCM Premium over Finance) to minimize M365 licensing costs.
+* Identifies when a "Team Member" license is sufficient vs. a full "Enterprise" license based on mapped duties.
+
+
+* **Real-Time API Orchestration:**
+* Communicates directly with **Microsoft Graph API** and **D365 OData entities** for instantaneous provisioning, removing the need for manual IT tickets and data entry.
+
+
 
 ---
+
 
 ## 2. System Architecture
 
