@@ -43,14 +43,36 @@ By bridging the gap between human HR requests and technical system requirements,
 The following diagram illustrates the high-level interaction between the user, the AI Agent, and the enterprise backend systems.
 
 ```mermaid
-graph TD
-    User((Admin/User)) -->|Natural Language| Teams[Microsoft Teams UI]
-    Teams -->|Request| Agent{AI Agent Brain}
-    Agent -->|Step 5: Duty Search| MapFlow[Roles Duty Mapping Flow]
-    MapFlow -->|Return Role/SKU| Agent
-    Agent -->|Step 9: Assign License| LicFlow[License Assignment Flow]
-    LicFlow -->|Graph API| M365((Microsoft 365))
-    Agent -->|Create Profile| ERP((D365 F&O))
+graph LR
+    A((Admin)) -->|User Info| B{AI Agent}
+    
+    subgraph Provisioning
+        B --> C[Create AD User]
+        B --> D[Create F&O User]
+    end
+
+    subgraph Association
+        D --> E[Assign D365 Roles]
+        C --> F{License Group<br/>Exists?}
+    end
+
+    F -->|Yes| G[Add to License Group]
+    F -->|No| H[Direct License<br/>Assignment]
+    
+    G --> I[Final M365 License]
+    H --> I
+
+    %% Contrast-Focused Styling
+    style B fill:#e1f5fe,stroke:#01579b,color:#000
+    style Provisioning fill:#f1f8e9,stroke:#558b2f,color:#000
+    style Association fill:#fff3e0,stroke:#e65100,color:#000
+    style C fill:#fff,stroke:#333,color:#000
+    style D fill:#fff,stroke:#333,color:#000
+    style E fill:#fff,stroke:#333,color:#000
+    style F fill:#fff,stroke:#333,color:#000
+    style G fill:#fff,stroke:#333,color:#000
+    style H fill:#fff,stroke:#333,color:#000
+    style I fill:#e8f5e9,stroke:#2e7d32,color:#000
 
 ```
 
@@ -84,20 +106,36 @@ graph TD
 The system relies on a **Waterfall Search** to identify roles. If a direct duty name match is not found, the system cascades through privileges and role names to find the best fit.
 
 ```mermaid
-flowchart TD
-    Start([Start: Receive Duty Input]) --> Filter[Filter: mserp_skuname != 'NONE']
-    Filter --> Duty{Match in DutyName?}
-    Duty -- No --> Priv{Match in PrivilegeName?}
-    Priv -- No --> Role{Match in RoleName?}
+graph LR
+    A((Admin)) -->|User Info| B{AI Agent}
     
-    Duty -- Yes --> Sort[Sort by mserp_priority DESC]
-    Priv -- Yes --> Sort
-    Role -- Yes --> Sort
-    Role -- No --> Manual([Flag for Manual Review])
-    
-    Sort --> Result[Return @first Record]
-    Result --> End([End: Handover to Step 8])
+    subgraph Provisioning [User Creation]
+        B --> C[Create AD User]
+        B --> D[Create F&O User]
+    end
 
+    subgraph Association [Role & License]
+        D --> E[Assign D365 Roles]
+        C --> F{License Group<br/>Exists?}
+    end
+
+    F -->|Yes| G[Add to License Group]
+    F -->|No| H[Direct License<br/>Assignment]
+    
+    G --> I[Final M365 License]
+    H --> I
+
+    %% High-Contrast Styling (No White/Pink)
+    style B fill:#e1f5fe,stroke:#01579b,color:#000
+    style Provisioning fill:#e0e0e0,stroke:#424242,color:#000
+    style Association fill:#fff9c4,stroke:#fbc02d,color:#000
+    style C fill:#cfd8dc,stroke:#333,color:#000
+    style D fill:#cfd8dc,stroke:#333,color:#000
+    style E fill:#fff176,stroke:#333,color:#000
+    style F fill:#fff176,stroke:#333,color:#000
+    style G fill:#fff176,stroke:#333,color:#000
+    style H fill:#fff176,stroke:#333,color:#000
+    style I fill:#c8e6c9,stroke:#2e7d32,color:#000
 ```
 
 ---
