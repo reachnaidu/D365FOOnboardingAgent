@@ -142,10 +142,31 @@ graph LR
 
 ## 5. Getting Started
 
-1. **Import Flows:** Upload the `.zip` packages for the Mapping and Licensing flows to your Power Automate environment.
-2. **Configure Variables:** Update the ClientID and ClientSecret in the Step 9 flow.
-3. **Configure Agent:** Copy the contents of `07_Master_System_Prompt.txt` into your AI Orchestrator's instructions.
-4. **Run UAT:** Follow the scripts in Document 09 to verify connectivity.
+## 🚀 Getting Started
+
+To deploy the User Lifecycle Orchestrator, please follow our detailed configuration guide. This ensures secrets are handled securely via Key Vault and environment endpoints are correctly mapped.
+
+👉 **[View the Full Installation Guide](./INSTALLATION.md)
+
+⚙️ Final Configuration & Validation
+
+Once the core infrastructure is deployed via the Installation Guide, complete these final steps to activate the AI Agent:
+
+1. Configure the Agent Brain
+The AI requires specific logic to handle duty mapping and licensing rules.
+
+Open your AI Agent/Copilot Studio.
+
+Navigate to Instructions/System Prompt.
+
+Copy the full contents of 07_Master_System_Prompt.txt and paste them into the Agent's instructions.
+
+2. User Acceptance Testing (UAT)
+Before moving to production, verify that the AD, F&O, and Licensing flows are correctly linked.
+
+Refer to Document 09: UAT Test Scripts.
+
+Run the "New Hire Onboarding" scenario to verify end-to-end connectivity across all systems.
 
 ---
 
