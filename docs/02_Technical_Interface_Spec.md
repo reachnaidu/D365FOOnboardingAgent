@@ -1,9 +1,3 @@
-I understand—I was trying to rewrite too much. Let’s stick **strictly** to your existing structure and only insert the necessary updates for the **License Groups** and **Direct Fallback** logic you added recently.
-
-Here is the updated **Document 02** that preserves your original format while including the new technical requirements for Step 9.
-
----
-
 # Document 02: Technical Interface Specification (TIS)
 
 ## 1. Overview
