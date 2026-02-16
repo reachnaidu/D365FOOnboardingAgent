@@ -1,4 +1,4 @@
-# Document 01: Functional Specification - F&O User onboarding Agent
+# Document 01: Functional Specification - F&O User onboarding orchestrator
 
 ## 1. Executive Summary
 
