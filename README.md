@@ -82,15 +82,15 @@ graph LR
 
 
 * **[01_Functional_Specification.md](./docs/01_Functional_Specification.md):** High-level business goals and user workflows.
-* **[02_Technical_Interface_Spec.md](../docs/02_Technical_Interface_Spec.md):** Detailed API payloads and sequence diagrams for Step 9.
-* **[03_Logic_Decision_Matrix.md](../docs/03_Logic_Decision_Matrix.md):** The core "Priority Rule" for license suppression.
-* **[04_SKU_Mapping_Reference.md](../docs/04_SKU_Mapping_Reference.md):** Valid strings for the Power Automate dictionary.
-* **[05_Security_Compliance.md](../docs/05_Security_Compliance.md):** OAuth2 authentication and data privacy details.
-* **[06_RAG_Knowledge_Base_Schema.md](../docs/06_RAG_Knowledge_Base_Schema.md):** Schema for semantic fallback search.
-* **[07_Master_System_Prompt.txt](../docs/07_Master_System_Prompt.txt):** The core instruction set for the AI Agent.
-* **[08_Technical_Specification.md](../docs/08_Technical_Specification.md):** "Under the hood" flow logic and waterfall search mechanics.
-* **[09_UAT_Test_Script.md](../docs/09_UAT_Test_Script.md):** Step-by-step validation procedures.
-* **[10_Project_Closeout.md](../docs/10_Project_Closeout.md):** Final deployment summary and maintenance guide.
+* **[02_Technical_Interface_Spec.md](./docs/02_Technical_Interface_Spec.md):** Detailed API payloads and sequence diagrams for Step 9.
+* **[03_Logic_Decision_Matrix.md](./docs/03_Logic_Decision_Matrix.md):** The core "Priority Rule" for license suppression.
+* **[04_SKU_Mapping_Reference.md](./docs/04_SKU_Mapping_Reference.md):** Valid strings for the Power Automate dictionary.
+* **[05_Security_Compliance.md](./docs/05_Security_Compliance.md):** OAuth2 authentication and data privacy details.
+* **[06_RAG_Knowledge_Base_Schema.md](./docs/06_RAG_Knowledge_Base_Schema.md):** Schema for semantic fallback search.
+* **[07_Master_System_Prompt.txt](./docs/07_Master_System_Prompt.txt):** The core instruction set for the AI Agent.
+* **[08_Technical_Specification.md](./docs/08_Technical_Specification.md):** "Under the hood" flow logic and waterfall search mechanics.
+* **[09_UAT_Test_Script.md](./docs/09_UAT_Test_Script.md):** Step-by-step validation procedures.
+* **[10_Project_Closeout.md](./docs/10_Project_Closeout.md):** Final deployment summary and maintenance guide.
 
 ---
 
@@ -141,7 +141,7 @@ graph LR
 
 To deploy the User Onboarding Orchestrator, please follow our detailed configuration guide. This ensures secrets are handled securely via Key Vault and environment endpoints are correctly mapped.
 
-👉 **[View the Full Installation Guide](../docs/INSTALLATION.md)
+👉 **[View the Full Installation Guide](./docs/INSTALLATION.md)
 
 ⚙️ Final Configuration & Validation
 
