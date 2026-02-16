@@ -33,12 +33,25 @@ By bridging the gap between human HR requests and technical system requirements,
 * **Real-Time API Orchestration:**
 * Communicates directly with **Microsoft Graph API** and **D365 OData entities** for instantaneous provisioning, removing the need for manual IT tickets and data entry.
 
+---
+
+## 2. The 10-Step Execution Framework
+
+To bridge the gap between documentation and technical flows, the orchestrator follows this standardized 10-step lifecycle:
+
+| Phase | Step | Name | Key Document |
+| --- | --- | --- | --- |
+| **Discovery** | 01-04 | **Identity & Intent** | [Doc 01](./docs/01_Functional_Specification.md) |
+| **Intelligence** | **05** | **Role Mapping (Flow A)** | [Doc 02](./docs/02_Technical_Interface_Spec.md) |
+|  | 08 | **License Optimization** | [Doc 03](./docs/03_Logic_Decision_Matrix.md) |
+| **Execution** | **09** | **Provisioning (Flow B)** | [Doc 02](./docs/02_Technical_Interface_Spec.md) |
+| **Closure** | 10 | **Verification** | [Doc 09](./docs/09_UAT_Test_Script.md) |
 
 
 ---
 
 
-## 2. System Architecture
+## 3. System Architecture
 
 The following diagram illustrates the high-level interaction between the user, the AI Agent, and the enterprise backend systems.
 
@@ -78,7 +91,7 @@ graph LR
 
 ---
 
-## 3. Documentation Contents
+## 4. Documentation Contents
 
 
 * **[01_Functional_Specification.md](./docs/01_Functional_Specification.md):** High-level business goals and user workflows.
@@ -96,7 +109,7 @@ graph LR
 
 
 
-## 4. Key Technical Logic
+## 5. Key Technical Logic
 
 The system relies on a **Waterfall Search** to identify roles. If a direct duty name match is not found, the system cascades through privileges and role names to find the best fit.
 
@@ -135,6 +148,45 @@ graph LR
 
 ---
 
+## 6. Key Technical Logic (Step 6 Waterfall)
+
+The system uses a **Waterfall Search** to identify roles. If a duty name match is not found, the system cascades through privileges and role names.
+
+```mermaid
+graph TD
+    Start[User Duty Input] --> D{Duty Match?}
+    D -- No --> P{Privilege Match?}
+    P -- No --> R{Role Match?}
+    D -- Yes --> Result[Return SKU & Priority]
+    P -- Yes --> Result
+    R -- Yes --> Result
+    R -- No --> Fallback[Trigger RAG Search]
+
+```
+
+
+---
+
+## 7. Key Technical Logic (Step 5 Waterfall)
+The system uses a Waterfall Search to identify roles. If a duty name match is not found, the system cascades through privileges and role names.
+
+Code snippet
+graph TD
+    Start[User Duty Input] --> D{Duty Match?}
+    D -- No --> P{Privilege Match?}
+    P -- No --> R{Role Match?}
+    D -- Yes --> Result[Return SKU & Priority]
+    P -- Yes --> Result
+    R -- Yes --> Result
+    R -- No --> Fallback[Trigger RAG Search]
+
+8. Getting Started
+🚀 View the Full Installation Guide
+
+Configure Agent Brain: Copy the contents of 07_Master_System_Prompt.txt into Copilot Studio.
+
+UAT Validation: Run the "New Hire Onboarding" scenario in 09_UAT_Test_Script.md to verify the Flow B (Step 9) connectivity.
+
 ## 5. Getting Started
 
 ## 🚀 Getting Started
@@ -161,7 +213,7 @@ Before moving to production, verify that the AD, F&O, and Licensing flows are co
 
 Refer to Document 09: UAT Test Scripts.
 
-Run the "New Hire Onboarding" scenario to verify end-to-end connectivity across all systems.
+Run the "New User  Onboarding" scenario to verify end-to-end connectivity across all systems.
 
 ---
 
