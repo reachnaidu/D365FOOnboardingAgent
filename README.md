@@ -81,7 +81,7 @@ graph LR
 ## 3. Documentation Contents
 
 
-* **[01_Functional_Specification.md](../docs/01_Functional_Specification.md):** High-level business goals and user workflows.
+* **[01_Functional_Specification.md](./docs/01_Functional_Specification.md):** High-level business goals and user workflows.
 * **[02_Technical_Interface_Spec.md](../docs/02_Technical_Interface_Spec.md):** Detailed API payloads and sequence diagrams for Step 9.
 * **[03_Logic_Decision_Matrix.md](../docs/03_Logic_Decision_Matrix.md):** The core "Priority Rule" for license suppression.
 * **[04_SKU_Mapping_Reference.md](../docs/04_SKU_Mapping_Reference.md):** Valid strings for the Power Automate dictionary.
