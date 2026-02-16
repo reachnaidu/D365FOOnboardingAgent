@@ -141,7 +141,7 @@ graph LR
 
 To deploy the User Onboarding Orchestrator, please follow our detailed configuration guide. This ensures secrets are handled securely via Key Vault and environment endpoints are correctly mapped.
 
-👉 **[View the Full Installation Guide](./INSTALLATION.md)
+👉 **[View the Full Installation Guide](../docs/INSTALLATION.md)
 
 ⚙️ Final Configuration & Validation
 
