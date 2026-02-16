@@ -153,15 +153,15 @@ graph LR
 The system uses a **Waterfall Search** to identify roles. If a duty name match is not found, the system cascades through privileges and role names.
 
 ```mermaid
-graph TD
-    Start[User Duty Input] --> D{Duty Match?}
-    D -- No --> P{Privilege Match?}
-    P -- No --> R{Role Match?}
-    D -- Yes --> Result[Return SKU & Priority]
-    P -- Yes --> Result
-    R -- Yes --> Result
-    R -- No --> Fallback[Trigger RAG Search]
-
+graph LR
+    In[Input] --> D{Duty?}
+    D -- No --> P{Priv?}
+    P -- No --> R{Role?}
+    R -- No --> RAG[RAG Search]
+    
+    D -- Yes --> Out[SKU & Priority]
+    P -- Yes --> Out
+    R -- Yes --> Out
 ```
 
 
