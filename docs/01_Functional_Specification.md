@@ -40,6 +40,22 @@ The onboarding process follows a 10-step sequence:
 
 ## 5. System Architecture Overview
 
----
+The system utilizes a modular design to separate conversation from technical execution:
 
+* **Copilot Studio:** Handles user interaction and natural language processing.
+* **Power Automate:** Executes the 10-step logic and manages API calls.
+* **Dataverse:** Stores the SKU Mapping and Priority Rule tables.
+* **Microsoft Graph & F&O API:** Target systems for user and license provisioning.
+
+## 6. Functional Requirements Matrix
+
+| ID | Feature | Priority |
+| --- | --- | --- |
+| **FR-01** | Collect User Info & Duties via AI | Must-Have |
+| **FR-02** | Waterfall Search (Duty > Priv > Role) | Must-Have |
+| **FR-03** | Priority Rule for License Optimization | Must-Have |
+| **FR-04** | Provision M365 & D365 Profiles | Must-Have |
+| **FR-05** | Deactivate Users (Offboarding) | Must-Have |
+
+---
 
