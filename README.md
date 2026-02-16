@@ -82,7 +82,7 @@ graph LR
 
 ### Phase 1: Specifications
 
-* **[01_Functional_Specification.md](https://www.google.com/search?q=./01_Functional_Specification.md):** High-level business goals and user workflows.
+* **[01_Functional_Specification.md](./docs/01_Functional_Specification.md):** High-level business goals and user workflows.
 * **[02_Technical_Interface_Spec.md](https://www.google.com/search?q=./02_Technical_Interface_Spec.md):** Detailed API payloads and sequence diagrams for Step 9.
 * **[08_Technical_Specification.md](https://www.google.com/search?q=./08_Technical_Specification.md):** "Under the hood" flow logic and waterfall search mechanics.
 
