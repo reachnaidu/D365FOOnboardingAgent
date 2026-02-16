@@ -42,6 +42,4 @@ The onboarding process follows a 10-step sequence:
 
 ---
 
-### **Next Step for you:**
 
-Once you have pasted this into **01_Functional_Specification.md**, would you like me to provide the specific data for **02_Technical_Interface_Spec.md**, which focuses on the API inputs/outputs like `flowinputjobduty` and `LicenseInput`?
