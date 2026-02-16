@@ -84,5 +84,3 @@ The flow uses an internal `D365skupartnumberMapping` variable to translate the `
 
 ---
 
-**Next Step for you:**
-Once this is saved, would you like me to provide the content for **03_Logic_Decision_Matrix.md**, which explains exactly how the Agent decides which license is the "Base" and which is the "Attach" based on the priorities?
