@@ -193,7 +193,7 @@ UAT Validation: Run the "New Hire Onboarding" scenario in 09_UAT_Test_Script.md 
 
 To deploy the User Onboarding Orchestrator, please follow our detailed configuration guide. This ensures secrets are handled securely via Key Vault and environment endpoints are correctly mapped.
 
-👉 **[View the Full Installation Guide](./docs/INSTALLATION.md)
+👉 **[View the Full Installation Guide](./docs/installation.md) 
 
 ⚙️ Final Configuration & Validation
 
