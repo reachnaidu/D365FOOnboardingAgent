@@ -22,7 +22,7 @@ By bridging the gap between human HR requests and technical system requirements,
 
 * **Automated Security Role Assignment:**
 * Directly pushes the identified security roles into the D365 user profile.
-* Dynamically manages membership in **Entra ID Security Groups**, ensuring that folder access and application permissions are aligned with the user’s ERP role.
+
 
 
 * **Intelligent License Optimization:**
