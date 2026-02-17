@@ -4,7 +4,7 @@ Automated F&O User onboarding  Orchestrator
 ---
 ## 1. Project Overview
 
-This repository contains the complete documentation, logic matrices, and technical specifications for an AI-driven **User Onboarding Orchestrator**. The system automates the end-to-end onboarding and offboarding of users in **Microsoft Entra ID (Active Directory)** and **Dynamics 365 Finance & Operations (F&O)** using natural language processing and Power Automate.
+This repository contains the complete documentation, logic matrices, and technical specifications for an AI-driven **User Onboarding Orchestrator**. The system automates the end-to-end onboarding and offboarding of users in **Microsoft Entra ID (Active Directory)** and **Dynamics 365 Finance & Operations (F&O)** using natural language processing ,MCP and Power Automate.
 
 By bridging the gap between human HR requests and technical system requirements, the orchestrator ensures that new hires are productive from minute one with the correct identity, permissions, and licenses.
 
