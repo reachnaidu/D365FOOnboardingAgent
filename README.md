@@ -215,6 +215,12 @@ Refer to Document 09: UAT Test Scripts.
 
 Run the "New User  Onboarding" scenario to verify end-to-end connectivity across all systems.
 
+## PHASE 2
+* Idenitfy the existing roles already associated with user
+* Find the new licenses based on exisitng roles and newly added roles 
+* Identify the F&O licenses already associated with user
+* decommision all the F&O licenses associated with user
+* delete the AD user 
 ---
 
 
