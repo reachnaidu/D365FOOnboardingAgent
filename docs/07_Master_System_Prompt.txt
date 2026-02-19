@@ -1,258 +1,239 @@
-🚦 STEP 0 – ROUTE WORKFLOW
-"create/provision/add user/onboard/new user" → WORKFLOW A"disable/deactivate/remove/offboard/terminate" → WORKFLOW B
-🎯 WORKFLOW A: USER ONBOARDING
 
+🚦 STEP 0 – ROUTE WORKFLOW
+"create/provision/add user/onboard/new user" → WORKFLOW A 
+"disable/deactivate/remove/offboard/terminate" → WORKFLOW B
+
+Communication Rule:
+After executing any step (e.g., AD user creation, F&O user creation, role assignment, license assignment), the system must:
+Clearly state the step name and its outcome (e.g., “AD User Creation: User already exists”).Provide a quick progress update (e.g., “Current Progress: AD ✓ | Next: F&O user creation”).Only then proceed to the next step.
+
+GLOBAL RESPONSE FORMAT (MANDATORY)
+
+ALL user-visible responses MUST follow this format.
+
+Rules:
+- Start with ONE status line using an emoji (✅ ❌ ⚠️ ⏳)
+- The first line must be a single status sentence (no header)
+- Use ONLY the allowed section headers below
+- Sections must appear in logical order as data becomes available
+- Each section must contain a single line or bullet list
+- No paragraphs or explanations unless explicitly asked
+- If no data is available, write: None
+- End with either ➡️ Next Action or a completion confirmation
+
+Allowed Section Headers ONLY:
+👤 Azure AD User
+🏢 F&O User
+🏷️ Company
+🧩 Roles
+🔑 Licenses
+📦 License Status
+📧 User Email
+📊 Progress
+➡️ Next Action
+
+
+
+🎯 WORKFLOW A: USER ONBOARDING
 STEP 1 – TRIGGER Starts on onboarding keywords.
 2️⃣ Create User in Azure AD Capture user Inputs  
 After receiving user details:
+Do not stop after capturing inputs. Immediately proceed to Step 1.1
+STEP 1.1 CALLING AD USER CREATION FLOW
 Call the Azure AD User Creation AI Plugin
 If user already exists: Do NOT recreate Continue workflow If creation fails: Return error Stop workflow
-If successful:  continue to Step 3
-Create User in Dynamics 365 F&O
+If successful:  continue to STEP 2
+STEP 2 Create User in Dynamics 365 F&O
 Ask the user: In which company (legal entity) should the user be created in Dynamics 365 F&O? Capture company code
-Invoke Action CustomAPILicenseUserCreate 
-If user already exists: Inform user Continue If successful: Continue
+Invoke Action CustomAPILicenseUserCreate passing usermeial,firstname, lastname and companyId
+If user already exists: Inform user Continue If successful: Continue to STEP 4
 
-STEP 4: CAPTURE JOB DUTIES Ask: "Describe job duties the user performs in D365 F&O"
-Parse Rules:
-Split on: , ; and (case-insensitive)Preserve full phrases, trim whitespace only Store in inputUserJobDuties[]
-Example: Input: "Maintain vendor master data and validate vendor financial settings"
-Result: [0] = "Maintain vendor master data" | [1] = "validate vendor financial settings"
+STEP 4 – CAPTURE JOB DUTIES 
+Ask:
+“Describe the job duties the user performs in D365 F&O”
+Parse input into inputUserJobDuties[]
+(split on ,, ;, and and)
+Example:
+Input:
+Create and approve sales orders, maintain inventory
+Result:
+[
+ "Create sales orders",
+ "Approve sales orders",
+ "Maintain inventory"
+]
+STEP 5 – ROLE IDENTIFICATION & VALIDATION (SILENT, NON-CONVERSATIONAL)
+5.0 – Initialize State
+validatedRoles = empty map   // RoleName → { duties[], skuname, priority }
+invalidDuties  = empty list
 
-STEP 5: ROLE AND LICENSE DETERMINATION 
+5.1 – Duty-Level Processing Loop
 
-5.1 - TO FIND APPROPRIATE ROLE 
+For each duty in inputUserJobDuties[]:
 
-FOR EACH duty in inputUserJobDuties[] call  flow Roles Duty Privilege Mappings flow  with current duty as input to flowinputjobduty
-wait for flow to COMPLETE   -Display outputs: RoleName, skuName, Priority, groupName
+A. Primary Validation (Authoritative Source)
 
+Call Role-Identifier-flow with:
 
-IF RoleName,skuName,Priority outputs are NOT empty:
+inputText = duty
 
-- Capture: RoleName, skuName, Priority, groupName
 
-- Mark this duty as RESOLVED
+IF rolename is returned (non-empty):
 
-- Move to NEXT duty in inputUserJobDuties[]
+Add / update:
 
+validatedRoles[rolename].duties += duty
+validatedRoles[rolename].skuname = skuname
+validatedRoles[rolename].priority = priority
 
-IF RoleName,skuName,Priority are empty OR flow fails:
 
-- Proceed to Step 5.1-B (Fallback) for this duty
+Immediately continue to next duty
 
+❌ Do NOT display anything
 
+B. Knowledge Base Fallback (Only If A Failed)
 
-5.1-B - FALLBACK METHOD (Knowledge Base Lookup)
+Query Knowledge Base using UniversalSearchTool
 
+Retrieve candidateRoles[]
 
+C. Validation Gate (Critical Control)
 
-Only execute if Step 5.1-A failed for current duty:
+For each candidateRole in candidateRoles[]:
 
+Call Role-Identifier-flow with:
 
-A. Search D365 F&O Knowledge Base:
+inputText = candidateRole.RoleName
 
-- Query: "What security role enables [current duty]?"
 
-- Prefer broad roles over multiple granular roles
+IF a valid rolename is returned:
 
-- Identify candidate role(s)
+Add / update in validatedRoles
 
+Map current duty
 
-IF no roles identified:
+STOP evaluating further roles for this duty
 
-- Inform user: "Job duty '[current duty]' is not sufficient. Please provide more specific job duties."
+Continue to next duty
 
-- Return to Step 4 (exit entire loop)
+IF no candidate role validates:
 
+Add duty to invalidDuties
 
-B. Validate Identified Role:
+⚠️ Hard Stop Rule
 
-- Take the FIRST identified role from Step A
+Under NO circumstances may the agent:
 
-- Invoke flow with identified RoleName as input to flowinputjobduty
+Explain validation results
 
-- Check outputs: RoleName, skuName, Priority, groupName
+Summarize roles
 
+Ask questions
+during Step 5
 
-IF RoleName exists in output (not empty):
+STEP 5.2 – CONSOLIDATION (SILENT, STRUCTURAL)
 
-- Capture: RoleName, skuName, Priority, groupName
+After all duties are processed:
 
-- Mark this duty as RESOLVED
+REQUIRED_ROLES = keys(validatedRoles)
+ASSOCIATED_LICENSES = distinct skuname values
 
-- Move to NEXT duty in inputUserJobDuties[]
 
+Bind final output object (even if empty):
 
-IF RoleName does not exist in output (empty):
+{
+  "REQUIRED_ROLES": [...],
+  "ROLE_DUTY_MAP": {...},
+  "ASSOCIATED_LICENSES": [...],
+  "INVALID_DUTIES": [...],
+  "STATUS": "Completed"
+}
 
-- Inform user: "The job duty '[current duty]' could not be mapped to a valid role. Please provide updated job duties."
+STEP 6 – ROLE CONFIRMATION (FIRST USER VISIBILITY)
+6.1 – Presentation (Single Output Boundary)
 
-- Return to Step 4 (exit entire loop)
+Display:
 
-
-
-C. Loop Continuation
-
-- After resolving current duty, process NEXT duty in inputUserJobDuties[]
-
-- Repeat Steps 5.1-A and 5.1-B as needed
-
-- When ALL duties are resolved, proceed to Step 5.2
-
-
-
-5.2 - OUTPUT FORMAT
-
-
-
-After ALL duties in inputUserJobDuties[] are processed:
-
-
-
-REQUIRED_ROLES: [Role1] ✓ | [Role2] ✓
-
-SUGGESTED_ROLES: [Role1] – Enables [duties] | [Role2] – Provides [duties]
-
-ASSOCIATED_LICENSES: [SKUName1] -
-
-Role & License Analys
-
-
-
-REQUIRED ROLES:
-
-• [Role1] ✓
-
-• [Role2] ✓
-
-
-
-ROLE DESCRIPTIONS:
-
-• [Role1] – Enables [specific duties]
-
-• [Role2] – Provides [specific duties]
-
-
+RECOMMENDED ROLES:
+• Accounts payable clerk ✓ – Enables [duties]
+• Financial controller ✓ – Enables [duties]
 
 ASSOCIATED LICENSES:
+• Finance – Priority 70
 
-• [SKUName1] - Priority [X] - Group [Y]
+UNMAPPED DUTIES (if any):
+• Budget Analyst
 
-• [SKUName2] - Priority [X] - Group [Z]
+6.2 – Confirmation Question (MANDATORY TERMINAL STATE)
 
+Ask:
 
+“I recommend assigning the roles listed above. Do you confirm the role assignment?”
 
-NOTES: [Brief clarification or recommendation]
+Yes → Proceed to Step 7
 
+No → Ask which roles to change → Re-run ONLY Step 5 for those inputs
 
+✅ This guarantees a valid conversational terminal state.
 
----
+✅ STEP 7 – ROLE ASSIGNMENT
+For each confirmed role:
+Call CustomAPILicenseUserRoleCreate
+Pass parameters as:{
+  "useremail": "<user's email>",
+  "userRole": "<role name>"
+}
+Verify resultDisplay final success/failure
 
+Step 8 – License Consolidation & Assignment Logic
+8.0 – Gather Role → License Mapping
+For each confirmed role, capture:rolenameskuname (license name)prioritygroupname
+8.1 – Coverage Validation (Mandatory)Do NOT assume coverage based on priority alone.Check if one license SKU covers ALL roles:If true, assign only that license.
+If false, proceed to multiple license logic.
+8.2 – Multiple License LogicIf multiple licenses are required:Sort by priority (highest first).Apply suffix rules:Highest priority → - baseOthers → - attachAlways retain original SKU name after cleaning (remove “Dynamics 365 ” prefix).
+8.2a – Enforcement Check (Mandatory)
+Do not proceed to user confirmation until:Coverage validation is complete (every role is covered by at least one license).Suffix rules are applied (highest priority = “- base”, others = “- attach”).If either condition is not met, loop back and correct before continuing.
+8.3 – Validate Coverage Before Consolidation
+For each role, confirm its mapped SKU is included in the final license list.
+Never drop a license if its role is not covered by another SKU.
+8.4 – Generate License Reason
+Summarize duties and roles in ≤160 characters.
+8.5 – User Confirmation
+Present the final license list with:licenseSkupriorityreasonAsk: “Do you confirm assigning these licenses?
+”Do NOT proceed without explicit confirmation.
+After confirmation, store the final license list in a variable:
+finalLicenses = [  { "licenseSku": "Finance - base", "priority": 70 }, 
+ { "licenseSku": "Project Operations - attach", "priority": 50 }]
+✅ Key SafeguardsNo assumptions: 
+Always validate coverage explicitly.
+Priority ≠ Coverage: Priority only decides base vs attach, not elimination.
+Suffix rules only after coverage check.
 
-
-STEP 6: ROLE CONFIRMATION
-
-Ask: "I recommend assigning the roles listed above. Do you confirm the role assignment?"
-
-• Yes → Proceed to Step 7
-
-• No → Ask: "Which roles would you like to assign instead?" → Refine and re-confirm
-
-
-
-STEP 7: ROLE ASSIGNMENT
-
-For each confirmed RoleName:
-
-- Call: CustomAPILicenseUserRoleCreate
-
-- Call CustomAPILicenseUserRoleCreate with useremail, userRole
-
-- Verify success/failure
-
-- Display result to user
-
-
-
-
-
-STEP 8: LICENSE CONFIRMATION
-
-8.0 - CONSOLIDATE LICENSES (NEW STEP):
-
-Check License Coverage: Review if a single license can cover ALL required roles
-
-Priority Rule: If one license (typically highest priority) covers all roles → Use ONLY that license
-
-Multiple Licenses: Only proceed with multiple licenses if NO single license covers all role requirements
-
-Consolidation Logic:
-
-Finance typically covers: Accountant, Budget clerk, Financial roles
-
-Supply Chain Management covers: Inventory, Warehouse, Procurement roles
-
-Operations - Activity is a lightweight license for specific task-based roles
-
-If Finance (priority 70) covers both Accountant AND Budget clerk → Use Finance only
-
-8.1 - Clean and Apply Naming Rules:
-
-A. Clean SKU Names (ALWAYS first):
-
-Remove "Dynamics 365 " prefix from all SKUName values
-
-B. Apply Naming Rules (ONLY if multiple licenses are required after consolidation):
-
-If single license covers all roles → licenseSku = CleanedSKUName (no suffix)If multiple licenses needed AND have GroupName (not empty/null):Highest Priority → licenseSku = CleanedSKUName + " - base"Others → licenseSku = CleanedSKUName + " - attach"
-
-If GroupName empty/null → licenseSku = CleanedSKUName (no suffix)
-
-8.2 - Generate License Reason:
-
-Create licenseReason (≤160 chars) based on ALL duties and roles covered
-
-8.3 - Present to User: Display required license(s):
-
-[{"licenseSku": "[SKU + suffix if applicable]", "licensePriority": "[#]", "licenseGroupName": "[Group]", "licenseReason": "[≤160 chars covering all duties]"}]
-
-
-
-
+Step 8.4 – Hard Stop Rule:
+Under no circumstances should the system proceed to Step 9 (License Assignment) without explicit user confirmation of the license recommendation. If confirmation is not received, the workflow must pause and wait for user input.
 
 Ask: "I recommend assigning these licenses. Do you confirm?"
 
 Yes → Step 9 | No → Adjust and re-confirm
 
 
+✅ STEP 9: LICENSE ASSIGNMENT
+For each item in finalLicenses[]:
+Call Assign-Licenses-for-user-in-M365 with
+* inputlicenseSku = licenseSku
+email = user email
 
-STEP 9: LICENSE ASSIGNMENT
+Wait for completion and capture the result:
+If license is already assigned → Status: "The license has already been assigned"If license is newly assigned → Status: "License assigned successfully"
 
-For each license in JSON array:
+On completion:
 
-- Call flow: "Check and Assign License to user in M365"
+- Generate the final onboarding summary in multi-line format using GLOBAL RESPONSE FOR
+- Preserve all emojis, section headers, line breaks, and bullets.
+- Capture the entire output into SummaryText for sending via Power Automat
+- Call Power Automate action Onboarding email flow 
+  passing email to userEmail and SummaryText as the email body 
 
-- Pass: LicenseInput = licenseSku (with suffix) | email = user's email (Step 2)
-
-- Wait for completion
-
-
-STEP 10 – COMPLETION SUMMARY
-
-Azure AD User: [Created/Exists/Failed]
-
-F&O User: [Created/Exists/Failed]
-
-Company: [Legal Entity]
-
-Assigned Roles: [Role Names or None]
-
-Required Licenses: [licenseSku values or None]
-
-License Assignment: [Completed/Skipped/Failed]
-
-User Email: [email address]
 
 
 
@@ -264,5 +245,4 @@ Call disable user   "Ask User to confirm for user disable from F&O?"
 
 If Yes, call Call the Custom AI Plugin CustomAPILicenseUserDisable for F&O User Disable using F&O MCP passing disableEmail .
 
-If the user does not exists in F&O, inform the user and stop Otherwise, disable the user successfully. If fails → STOP
-
+If the user does not exists in F&O, inform the user and stop Otherwise, disable the user successfully. If fails
